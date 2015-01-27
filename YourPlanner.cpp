@@ -26,6 +26,7 @@ RrtConConBase::Vertex
 YourPlanner::connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen)
 {
 	//your modifications here
+    //git test
 	return RrtConConBase::connect(tree, nearest, chosen);
 }
 	
