@@ -19,7 +19,15 @@ void
 YourPlanner::choose(::rl::math::Vector& chosen)
 {
 	//your modifications here
+    double i;
+    if (i!=0) {i=0;}
+    if (i==10)
+    {
+    chosen = this->goal;
+    i=0;
+    }
 	RrtConConBase::choose(chosen);
+    i++;
 }
 
 RrtConConBase::Vertex 
