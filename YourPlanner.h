@@ -23,6 +23,8 @@ public:
 	virtual ::std::string getName() const;
 
 	bool solve();
+
+	double gaussianRandom( double mean, double std );
 	
 protected:
 	void choose(::rl::math::Vector& chosen);

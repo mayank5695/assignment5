@@ -16,21 +16,32 @@ YourPlanner::getName() const
 	return "Your Planner";
 }
 
+// copied from assignment 4
+double
+YourPlanner::gaussianRandom( double mean, double std ) {
+	const double norm = 1.0 / (RAND_MAX + 1.0);
+	double u = 1.0 - rand()*norm;
+	double v = rand()*norm;
+	double z = sqrt(-2.0*log(u))* cos(2.0*M_PI*v);
+	return mean + std*z;
+}
+
 void
 YourPlanner::choose(::rl::math::Vector& chosen)
 {
-    //your modifications here
-    if (i_chooser >= 10)
-    {
-    chosen = *(this->goal);
-    i_chooser = 0;
-    }
-    else
-    {
-        RrtConConBase::choose(chosen);
-    }
-    i_chooser ++;
-
+	double std = 1.; // depends on q dimension
+	::rl::math::Vector connectingVector = *this->start - *this->goal;
+	::rl::math::Vector VectorToPointBetweenStartAndGoal = connectingVector*rand()*(.5/(RAND_MAX+1.));
+	::rl::math::Vector viaPoint;
+	
+	i_chooser = 0;
+	viaPoint = *this->start*0;
+	
+//	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
+	for(int i = 0; i < chosen.size();i++){
+		chosen[i] = YourPlanner::gaussianRandom(viaPoint[i],std);
+	}
+	// TODO: remove configurations outside of joint limits
 }
 
 RrtConConBase::Vertex
