@@ -61,10 +61,11 @@ YourPlanner::connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vect
         //remove extended note
         if (tree[nearest.first].fail_counter >= 20)
         {
-            //std::cout << "removing" << std::endl;
+
             for (int i=0;i<RrtConConBase::tree.size();i++)
             {
-                RrtConConBase::tree[i].removing_vertex(tempvertex);
+                //std::cout << "removing" << std::endl;
+                RrtConConBase::tree[i].removing_vertex(nearest.first);
             }
 
         }
