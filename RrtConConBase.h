@@ -97,10 +97,25 @@ protected:
 		::rl::plan::VectorPtr q;
 
         unsigned int fail_counter;
+        bool is_connected;
 
         VertexBundle()
         {
+            is_connected = true;
             fail_counter = 0;
+        }
+
+        void set_connected(bool connected = true)
+        {
+            this->is_connected = connected;
+            if(connected)
+                this->fail_counter = 0;
+        }
+
+        unsigned int fail()
+        {
+            if(!this->is_connected)
+                return ++this->fail_counter;
         }
 
 	};

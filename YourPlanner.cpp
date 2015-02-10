@@ -99,23 +99,21 @@ YourPlanner::connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vect
 
     if (tempvertex == NULL)
     {
-        //nearest.first;
-		tree[nearest.first].fail_counter++;
-    }
-    else
-    {
-        //remove extended node
-        if (tree[nearest.first].fail_counter >= NEAREST_MAX_FAILS)
-        {
+        // Could not connect. Increase fail counter and conditionally remove from graph.
+
+        if(tree[nearest.first].fail() >= NEAREST_MAX_FAILS) {
             for (int i=0;i<RrtConConBase::tree.size();i++)
             {
                 RrtConConBase::tree[i].removing_vertex(nearest.first);
             }
 
+            return NULL;
         }
+    } else {
+        tree[nearest.first].set_connected(true);
     }
 
-    return tempvertex ;
+    return tempvertex;
 }
 	
 RrtConConBase::Vertex 
