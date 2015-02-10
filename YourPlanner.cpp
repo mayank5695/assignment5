@@ -34,13 +34,31 @@ YourPlanner::choose(::rl::math::Vector& chosen)
 	::rl::math::Vector VectorToPointBetweenStartAndGoal = connectingVector*rand()*(.5/(RAND_MAX+1.));
 	::rl::math::Vector viaPoint;
 	
-	i_chooser = 0;
-	viaPoint = *this->start*0;
-	
-//	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
-	for(int i = 0; i < chosen.size();i++){
-		chosen[i] = YourPlanner::gaussianRandom(viaPoint[i],std);
-	}
+
+    if (i_chooser == 0){
+        RrtConConBase::choose(chosen);
+        //std::cout << "0" << std::endl;
+        i_chooser++;
+    }
+    if  (i_chooser <= 1){
+        viaPoint = *this->start;
+
+        //	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
+        for(int i = 0; i < chosen.size();i++){
+            chosen[i] = YourPlanner::gaussianRandom(viaPoint[i],std);
+        }
+        i_chooser++;
+    }
+    if(i_chooser > 1){
+            viaPoint = *this->goal;
+
+            //	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
+            for(int i = 0; i < chosen.size();i++){
+                chosen[i] = YourPlanner::gaussianRandom(viaPoint[i],std);
+            }
+            i_chooser = 0;
+    }
+
 	// TODO: remove configurations outside of joint limits
 }
 
