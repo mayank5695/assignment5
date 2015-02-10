@@ -16,6 +16,8 @@ using namespace ::rl::plan;
 class YourPlanner : public RrtConConBase
 {
 public:
+	static const int NEAREST_MAX_FAILS = 20;
+
 	YourPlanner();
 	
 	virtual ~YourPlanner();

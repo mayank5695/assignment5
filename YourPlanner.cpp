@@ -84,24 +84,31 @@ YourPlanner::choose(::rl::math::Vector& chosen)
 RrtConConBase::Vertex
 YourPlanner::connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen)
 {
-	//your modifications here
-    //git test
-    //return RrtConConBase::connect(tree, nearest, chosen);
     RrtConConBase::Vertex tempvertex = RrtConConBase::connect(tree, nearest, chosen);
+
+	// RrtConConBase::connect tries to connect the configuration `chosen` with
+	// the closest configration (given as `nearest`).
+	// It returns NULL if it is not possible to extend the `nearest` configuration.
+	//
+	// Those configurations that cannot be extended (or fail to be extended many times)
+	// are most likely 'dead ends' and thus can be purged from the tree.
+	//
+	// For that purpose, a counter is incremented once everytime an extension fails.
+	// If a specified limit is exceeded (`NEAREST_MAX_FAILS`), that configuration is
+	// purged from the tree.
+
     if (tempvertex == NULL)
     {
         //nearest.first;
-                tree[nearest.first].fail_counter++;
+		tree[nearest.first].fail_counter++;
     }
     else
     {
-        //remove extended note
-        if (tree[nearest.first].fail_counter >= 20)
+        //remove extended node
+        if (tree[nearest.first].fail_counter >= NEAREST_MAX_FAILS)
         {
-
             for (int i=0;i<RrtConConBase::tree.size();i++)
             {
-                //std::cout << "removing" << std::endl;
                 RrtConConBase::tree[i].removing_vertex(nearest.first);
             }
 
