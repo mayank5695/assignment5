@@ -32,9 +32,11 @@ protected:
 	RrtConConBase::Vertex connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen);
 
 	RrtConConBase::Vertex extend(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen);
+
+	void gaussianSample(::rl::math::Vector& dest, const ::rl::math::Vector& reference, ::rl::math::Real stdDev);
 	
 private:
-    double i_chooser;
+    unsigned char i_chooser;
 };
 
 #endif // _YOUR_PLANNER_H_

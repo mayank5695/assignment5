@@ -1,9 +1,11 @@
 #include "YourPlanner.h"
 
+#include <rl/plan/SimpleModel.h>
+
 YourPlanner::YourPlanner() :  
-    RrtConConBase()
+    RrtConConBase(),
+	i_chooser(0)
 {
-    i_chooser = 0;
 }
 
 YourPlanner::~YourPlanner()
@@ -27,36 +29,53 @@ YourPlanner::gaussianRandom( double mean, double std ) {
 }
 
 void
+YourPlanner::gaussianSample(::rl::math::Vector& dest, const ::rl::math::Vector& reference, ::rl::math::Real stdDev)
+{
+    for(int i = 0; i < dest.size();i++){
+        dest[i] = YourPlanner::gaussianRandom(reference[i], stdDev);
+    }
+}
+
+void
 YourPlanner::choose(::rl::math::Vector& chosen)
 {
-	double std = 1.; // depends on q dimension
-	::rl::math::Vector connectingVector = *this->start - *this->goal;
-	::rl::math::Vector VectorToPointBetweenStartAndGoal = connectingVector*rand()*(.5/(RAND_MAX+1.));
-	::rl::math::Vector viaPoint;
+	::rl::math::Real std = 1.0; // depends on q dimension
+	//::rl::math::Vector connectingVector = *this->start - *this->goal;
+	//::rl::math::Vector VectorToPointBetweenStartAndGoal = connectingVector*rand()*(.5/(RAND_MAX+1.));
+	::rl::math::Vector viaPoint(this->model->getDof());
+
+	// This code cycles through different ways of sampling configurations.
+	// (0): This is the default uniform distribution.
+	// (1): This is a gaussian distribution around the initial configuration.
+	// (2): This is a gaussian distribution around the desired configuration.
+	//
+	// Since the number of cycles of this loop and the number of trees are
+	// relatively prime, this ensures that any choosing algorithm implemented
+	// below is applied to any of the trees.
 	
-
-    if (i_chooser == 0){
+	switch(i_chooser++)
+	{
+	case 0:
         RrtConConBase::choose(chosen);
-        //std::cout << "0" << std::endl;
-        i_chooser++;
-    }
-    if  (i_chooser <= 1){
+
+		break;
+
+	case 1:
         viaPoint = *this->start;
-
         //	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
-        for(int i = 0; i < chosen.size();i++){
-            chosen[i] = YourPlanner::gaussianRandom(viaPoint[i],std);
-        }
-        i_chooser++;
-    }
-    if(i_chooser > 1){
-            viaPoint = *this->goal;
+		this->gaussianSample(chosen, viaPoint, std);
 
-            //	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
-            for(int i = 0; i < chosen.size();i++){
-                chosen[i] = YourPlanner::gaussianRandom(viaPoint[i],std);
-            }
-            i_chooser = 0;
+		break;
+
+	case 2:
+	default:
+		i_chooser = 0;
+
+		viaPoint = *this->goal;
+        //	viaPoint = *this->goal + VectorToPointBetweenStartAndGoal;
+		this->gaussianSample(chosen, viaPoint, std);
+
+		break;
     }
 
 	// TODO: remove configurations outside of joint limits
